@@ -20,6 +20,9 @@ class Task(ConcurrentTransitionMixin, BaseTimestampModel):
         max_length=100, null=True, blank=True, verbose_name=_("Task Name")
     )
     description = models.TextField(max_length=3000, verbose_name=_("Task Description"))
+    deadline = models.DateTimeField(
+        blank=True, null=True, verbose_name=_("Task Deadline")
+    )
     creator = models.ForeignKey(
         get_user_model(), on_delete=models.CASCADE, verbose_name=_("Created by")
     )
