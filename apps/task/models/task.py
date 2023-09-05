@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django_fsm import FSMField, ConcurrentTransitionMixin
+from django_fsm import FSMField, ConcurrentTransitionMixin, transition
 
 from apps.core.models import BaseTimestampModel
 
@@ -41,6 +41,10 @@ class Task(ConcurrentTransitionMixin, BaseTimestampModel):
         verbose_name=_('Assigned to')
     )
     state = FSMField(default=State.TODO, choices=STATE_CHOICES)
+
+    @transition(field=state, source='*', target=State.DONE)
+    def mark_done(self):
+        pass
 
     class Meta:
         verbose_name = _('Task')
