@@ -23,13 +23,17 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskAssignSerializer(serializers.Serializer):
+    # Serializer for assigning user to the task
     user = serializers.PrimaryKeyRelatedField(write_only=True, queryset=User.objects.all())
 
 
 class TaskCommentSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True, default=serializers.CurrentUserDefault())
-    task = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = TaskComment
         fields = '__all__'
+
+
+class TaskCommentCreateSerializer(TaskCommentSerializer):
+    task = serializers.PrimaryKeyRelatedField(read_only=True)

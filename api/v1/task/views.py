@@ -1,12 +1,14 @@
 from django.http import QueryDict
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
-from api.v1.task.serializers import TaskSerializer, TaskAssignSerializer, TaskCommentSerializer
+from api.v1.task.serializers import TaskSerializer, TaskAssignSerializer, TaskCommentSerializer, \
+    TaskCommentCreateSerializer
 from apps.task.models import Task, TaskComment
 
 
@@ -14,7 +16,9 @@ class TaskViewSet(viewsets.ModelViewSet):
     serializer_class = TaskSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = Task.objects.all()
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_fields = ('creator', 'assigned', 'state')
+    search_fields = ('name', )
 
     def get_serializer_class(self):
         if action == 'assign':
@@ -75,7 +79,7 @@ class TaskViewSet(viewsets.ModelViewSet):
                 description='Success Response',
             ),
         })
-    @action(detail=True, methods=['post'], serializer_class=TaskCommentSerializer)
+    @action(detail=True, methods=['post'], serializer_class=TaskCommentCreateSerializer)
     def comment(self, request, *args, **kwargs):
         task = self.get_object()
         try:
@@ -97,4 +101,7 @@ class TaskCommentViewSet(viewsets.ModelViewSet):
     serializer_class = TaskCommentSerializer
     queryset = TaskComment.objects.all()
     permission_classes = (IsAuthenticatedOrReadOnly,)
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
     filterset_fields = ('task', 'user',)
+    search_fields = ('comment', )
+
