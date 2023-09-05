@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
-from apps.task.models import Task, TaskComment
+from apps.task.models import Task, TaskComment, TaskAttachment
 
 User = get_user_model()
 
@@ -36,6 +36,11 @@ class TaskCommentSerializer(serializers.ModelSerializer):
         read_only=True, default=serializers.CurrentUserDefault()
     )
 
+    def to_representation(self, instance):
+        data = super(TaskCommentSerializer, self).to_representation(instance)
+        data["user"] = UserSerializer(instance.creator).data
+        return data
+
     class Meta:
         model = TaskComment
         fields = "__all__"
@@ -43,3 +48,18 @@ class TaskCommentSerializer(serializers.ModelSerializer):
 
 class TaskCommentCreateSerializer(TaskCommentSerializer):
     task = serializers.PrimaryKeyRelatedField(read_only=True)
+
+
+class TaskAttachmentSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        read_only=True, default=serializers.CurrentUserDefault()
+    )
+
+    def to_representation(self, instance):
+        data = super(TaskAttachmentSerializer, self).to_representation(instance)
+        data["user"] = UserSerializer(instance.creator).data
+        return data
+
+    class Meta:
+        model = TaskAttachment
+        fields = '__all__'

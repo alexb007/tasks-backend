@@ -11,9 +11,9 @@ from api.v1.task.serializers import (
     TaskSerializer,
     TaskAssignSerializer,
     TaskCommentSerializer,
-    TaskCommentCreateSerializer,
+    TaskCommentCreateSerializer, TaskAttachmentSerializer,
 )
-from apps.task.models import Task, TaskComment
+from apps.task.models import Task, TaskComment, TaskAttachment
 
 
 class TaskViewSet(viewsets.ModelViewSet):
@@ -113,3 +113,13 @@ class TaskCommentViewSet(viewsets.ModelViewSet):
         "user",
     )
     search_fields = ("comment",)
+
+
+class TaskAttachmentViewSet(viewsets.ModelViewSet):
+    serializer_class = TaskAttachmentSerializer
+    queryset = TaskAttachment.objects.all()
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = (
+        "task",
+        "user",
+    )
