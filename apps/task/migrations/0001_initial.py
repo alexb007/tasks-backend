@@ -7,7 +7,6 @@ import django_fsm
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -16,37 +15,112 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Task',
+            name="Task",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated', models.DateTimeField(auto_now=True, verbose_name='Last updated at')),
-                ('name', models.CharField(blank=True, max_length=100, null=True, verbose_name='Task Name')),
-                ('description', models.TextField(max_length=3000, verbose_name='Task Description')),
-                ('state', django_fsm.FSMField(choices=[('todo', 'To do'), ('done', 'Done')], default='todo', max_length=50)),
-                ('assigned', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='assigned_tasks', to=settings.AUTH_USER_MODEL, verbose_name='Assigned to')),
-                ('creator', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Created by')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated",
+                    models.DateTimeField(auto_now=True, verbose_name="Last updated at"),
+                ),
+                (
+                    "name",
+                    models.CharField(
+                        blank=True, max_length=100, null=True, verbose_name="Task Name"
+                    ),
+                ),
+                (
+                    "description",
+                    models.TextField(max_length=3000, verbose_name="Task Description"),
+                ),
+                (
+                    "state",
+                    django_fsm.FSMField(
+                        choices=[("todo", "To do"), ("done", "Done")],
+                        default="todo",
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "assigned",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="assigned_tasks",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Assigned to",
+                    ),
+                ),
+                (
+                    "creator",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Created by",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Task',
-                'verbose_name_plural': 'Tasks',
+                "verbose_name": "Task",
+                "verbose_name_plural": "Tasks",
             },
             bases=(django_fsm.ConcurrentTransitionMixin, models.Model),
         ),
         migrations.CreateModel(
-            name='TaskComment',
+            name="TaskComment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True, verbose_name='Created at')),
-                ('updated', models.DateTimeField(auto_now=True, verbose_name='Last updated at')),
-                ('comment', models.TextField(max_length=1000, verbose_name='Comment text')),
-                ('task', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='task.task')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created",
+                    models.DateTimeField(auto_now_add=True, verbose_name="Created at"),
+                ),
+                (
+                    "updated",
+                    models.DateTimeField(auto_now=True, verbose_name="Last updated at"),
+                ),
+                (
+                    "comment",
+                    models.TextField(max_length=1000, verbose_name="Comment text"),
+                ),
+                (
+                    "task",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="task.task"
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="User",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Task comment',
-                'verbose_name_plural': 'Task comments',
-                'ordering': ('-created',),
+                "verbose_name": "Task comment",
+                "verbose_name_plural": "Task comments",
+                "ordering": ("-created",),
             },
         ),
     ]

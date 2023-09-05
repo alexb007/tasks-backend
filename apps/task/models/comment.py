@@ -7,20 +7,15 @@ from apps.core.models import BaseTimestampModel
 
 class TaskComment(BaseTimestampModel):
     task = models.ForeignKey(
-        'task.Task',
+        "task.Task",
         on_delete=models.CASCADE,
     )
-    comment = models.TextField(
-        max_length=1000,
-        verbose_name=_('Comment text')
-    )
+    comment = models.TextField(max_length=1000, verbose_name=_("Comment text"))
     user = models.ForeignKey(
-        get_user_model(),
-        on_delete=models.CASCADE,
-        verbose_name=_('User')
+        get_user_model(), on_delete=models.CASCADE, verbose_name=_("User")
     )
 
     class Meta:
-        ordering = ('-created',)
-        verbose_name = _('Task comment')
-        verbose_name_plural = _('Task comments')
+        ordering = ("-created",)
+        verbose_name = _("Task comment")
+        verbose_name_plural = _("Task comments")
