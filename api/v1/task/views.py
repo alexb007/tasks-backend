@@ -1,17 +1,17 @@
-from django.http import QueryDict
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema, OpenApiExample, OpenApiRequest, OpenApiResponse
 from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+
 from rest_framework.response import Response
 
 from api.v1.task.serializers import (
     TaskSerializer,
     TaskAssignSerializer,
     TaskCommentSerializer,
-    TaskCommentCreateSerializer, TaskAttachmentSerializer,
+    TaskCommentCreateSerializer,
+    TaskAttachmentSerializer,
 )
 from apps.task.models import Task, TaskComment, TaskAttachment
 
@@ -27,23 +27,29 @@ class TaskViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if action == "assign":
             return TaskAssignSerializer
+        if action == "comment":
+            return TaskCommentCreateSerializer
         return self.serializer_class
 
-    @swagger_auto_schema(
-        operation_description="POST /tasks/{id}/complete/",
-        request_body=openapi.Schema(type=openapi.TYPE_OBJECT, properties=None),
-        responses={
-            status.HTTP_200_OK: openapi.Response(
-                type=openapi.TYPE_OBJECT,
-                description="Success Response",
-                examples={
-                    "application/json": {
-                        "success": True,
-                        "message": "task <TaskName> with id <task_id> marked as done",
-                    }
-                },
+    def perform_create(self, serializer):
+        if self.action == 'create':
+            serializer.save(creator=self.request.user)
+        else:
+            serializer.save()
+
+    @extend_schema(
+        description="POST /tasks/{id}/complete/",
+        request=OpenApiRequest(),
+        examples=[
+            OpenApiExample(
+                'Success Response',
+                description='Success Response',
+                value={
+                    "success": True,
+                    "message": "task <TaskName> with id <task_id> marked as done",
+                }
             )
-        },
+        ]
     )
     @action(detail=True, methods=["patch"])
     def complete(self, request, *args, **kwargs):
@@ -57,14 +63,10 @@ class TaskViewSet(viewsets.ModelViewSet):
             }
         )
 
-    @swagger_auto_schema(
-        operation_description="POST /tasks/{id}/assign/",
+    @extend_schema(
+        description="POST /tasks/{id}/assign/",
         responses={
-            status.HTTP_200_OK: openapi.Response(
-                type=openapi.TYPE_OBJECT,
-                schema=TaskSerializer,
-                description="Success Response",
-            ),
+            status.HTTP_200_OK: TaskSerializer,
         },
     )
     @action(detail=True, methods=["patch"], serializer_class=TaskAssignSerializer)
@@ -78,14 +80,10 @@ class TaskViewSet(viewsets.ModelViewSet):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @swagger_auto_schema(
-        operation_description="POST /tasks/{id}/comment/",
+    @extend_schema(
+        description="POST /tasks/{id}/comment/",
         responses={
-            status.HTTP_200_OK: openapi.Response(
-                type=openapi.TYPE_OBJECT,
-                schema=TaskCommentSerializer,
-                description="Success Response",
-            ),
+            status.HTTP_200_OK: TaskCommentSerializer,
         },
     )
     @action(detail=True, methods=["post"], serializer_class=TaskCommentCreateSerializer)

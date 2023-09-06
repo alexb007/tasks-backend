@@ -35,11 +35,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "apps.core.apps.CoreConfig",
     "apps.task.apps.TaskConfig",
     "rest_framework",
     "djoser",
-    "drf_yasg",
     "django_filters",
+    "drf_spectacular"
 ]
 
 MIDDLEWARE = [
@@ -125,9 +126,26 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
     ),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 100,
+    "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
+}
+
+DJOSER = {
+    'ACTIVATION_URL': False,
+    'SEND_ACTIVATION_EMAIL': False,
+}
+
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('JWT',),
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Task App API',
+    'DESCRIPTION': 'Backend for tasks',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
 }
