@@ -38,7 +38,7 @@ class TaskCommentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         data = super(TaskCommentSerializer, self).to_representation(instance)
-        data["user"] = UserSerializer(instance.creator).data
+        data["user"] = UserSerializer(instance.user).data
         return data
 
     class Meta:
@@ -62,4 +62,4 @@ class TaskAttachmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TaskAttachment
-        fields = '__all__'
+        fields = "__all__"
