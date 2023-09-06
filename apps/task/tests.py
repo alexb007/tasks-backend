@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from .models import Task
+from ..task.models import Task
 
 
 class TaskTestCase(TestCase):
